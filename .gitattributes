@@ -1,0 +1,11 @@
+# Normalize line endings to LF so GitHub Actions (Linux runners) sees the same
+# files as local Windows checkouts.
+* text=auto eol=lf
+
+# Never mangle binary artifacts (models, images, notebooks are JSON).
+*.joblib binary
+*.png binary
+*.jpg binary
+*.db binary
+*.pptx binary
+*.ipynb text eol=lf

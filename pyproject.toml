@@ -9,7 +9,7 @@ description = "End-to-end MLOps pipeline for a credit card default (PD) model"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "ML Engineer, Credit Risk Department" }]
+authors = [{ name = "neftesputnik", email = "neftesputnik@gmail.com" }]
 keywords = ["credit-risk", "pd-model", "mlops", "mlflow", "dvc", "fastapi"]
 
 # Runtime dependencies live in requirements*.txt so that the Docker image can
@@ -27,7 +27,6 @@ extend-exclude = '''
     \.venv
   | \.dvc
   | mlruns
-  | data
   | notebooks/.*\.ipynb
 )/
 '''
@@ -47,7 +46,7 @@ filterwarnings = [
 
 [tool.coverage.run]
 source = ["src"]
-omit = ["tests/*", "src/api/app.py"]
+omit = ["tests/*"]
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if __name__ == .__main__.", "raise NotImplementedError"]
