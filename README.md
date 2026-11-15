@@ -23,7 +23,7 @@
 - [6. Тесты и CI](#6-тесты-и-ci)
 - [7. Docker и FastAPI](#7-docker-и-fastapi)
 - [8. Мониторинг дрифта (PSI)](#8-мониторинг-дрифта-psi)
-- [Соответствие критериям оценки](#соответствие-критериям-оценки)
+- [Что входит в проект](#что-входит-в-проект)
 - [Ограничения и дальнейшие шаги](#ограничения-и-дальнейшие-шаги)
 
 ---
@@ -448,19 +448,19 @@ docker build --build-arg REQUIREMENTS=requirements-train.txt -t credit-default-a
 
 ---
 
-## Соответствие критериям оценки
+## Что входит в проект
 
-| № | Критерий | Где реализовано |
-|---|---|---|
-| 1 | Организация кода и Git | структура `src/`, `tests/`, `notebooks/`, `data/`, `models/`; осмысленные коммиты; README |
-| 2 | Подготовка и валидация данных | `src/data/io.py`, `make_dataset.py`, `src/features/build_features.py`, Great Expectations suite (104 проверки), `notebooks/01_eda.ipynb` |
-| 3 | Построение и настройка модели | `src/models/pipeline.py` (Imputer/Scaler/OneHotEncoder + модель), `RandomizedSearchCV`, метрики ROC-AUC/PR-AUC/KS/Precision/Recall/F1, ROC-кривая |
-| 4 | MLflow Tracking | `src/models/train.py` (параметры, метрики, артефакты, модель + registry), `experiment.py` (6 экспериментов), `reports/experiments.md` |
-| 5 | DVC | `dvc.yaml` (prepare/validate/train), `params.yaml`, `.dvc`-файлы, `dvc metrics/plots` |
-| 6 | Тестирование и CI | 9 файлов тестов, `pytest`, `black`, `flake8`, GH Actions (lint, test, data-validation, docker) |
-| 7 | Docker и FastAPI | `Dockerfile`, `src/api/app.py` (`/predict`), `scripts/docker_build_run.ps1`, smoke-тест |
-| 8 | Мониторинг (дрифт) | `src/monitoring/drift.py` (PSI + KS + алерты), `reports/drift_report.json` |
-| 9 | Демонстрация | `docs/presentation.pptx`, `reports/experiments.md`, MLflow UI |
+| Компонент | Где находится |
+|---|---|
+| Подготовка и валидация данных | `src/data/io.py`, `src/data/make_dataset.py`, `src/data/validation.py` (Great Expectations, 104 проверки), `notebooks/01_eda.ipynb` |
+| Feature engineering | `src/features/build_features.py` (23 новых признака, общие для обучения и сервиса) |
+| Модель и метрики | `src/models/pipeline.py`, `src/models/train.py`, `src/models/evaluate.py` (ROC-AUC/PR-AUC/KS/Precision/Recall/F1, ROC-кривая) |
+| Эксперименты и трекинг | `src/models/experiment.py` (6 экспериментов), MLflow, `reports/experiments.md` |
+| Версионирование данных | `dvc.yaml` (prepare/validate/train), `params.yaml`, `.dvc`-файлы |
+| Тесты и CI | `tests/` (100 тестов), `.github/workflows/ci-cd.yml` (lint, test, data-validation, docker) |
+| Сервис и развёртывание | `src/api/app.py` (FastAPI), `Dockerfile`, `scripts/docker_build_run.ps1` |
+| Мониторинг дрифта | `src/monitoring/drift.py` (PSI + KS + алерты), `reports/drift_report.json` |
+| Демонстрация | `docs/presentation.pptx`, `reports/experiments.md`, MLflow UI |
 
 ---
 

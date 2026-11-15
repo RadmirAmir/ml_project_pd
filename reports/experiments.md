@@ -1,6 +1,6 @@
-# Experiment comparison
+# Сравнение экспериментов
 
-| # | experiment | model | ROC-AUC | PR-AUC | F1 | Precision | Recall | KS |
+| # | Эксперимент | Модель | ROC-AUC | PR-AUC | F1 | Precision | Recall | KS |
 |---|---|---|---|---|---|---|---|---|
 | 1 | 05_gradient_boosting | gradient_boosting | 0.7812 | 0.5588 | 0.5485 | 0.5355 | 0.5622 | 0.4335 |
 | 2 | 06_hist_gradient_boosting | hist_gradient_boosting | 0.7804 | 0.5560 | 0.5490 | 0.5145 | 0.5885 | 0.4347 |

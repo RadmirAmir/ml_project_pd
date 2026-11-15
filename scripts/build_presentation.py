@@ -343,7 +343,7 @@ def build() -> Presentation:
         Inches(6.55),
         Inches(11.8),
         Inches(0.4),
-        "ML-инженер кредитного отдела · GitHub: credit-scoring-model",
+        "ML-инженер кредитного отдела · GitHub: RadmirAmir/ml_project_pd",
         size=11,
         colour=RGBColor(0x8E, 0xA9, 0xC9),
     )
@@ -1025,24 +1025,24 @@ def build() -> Presentation:
     # 13. Summary
     # ------------------------------------------------------------------ #
     slide = _new_slide(prs)
-    _title_bar(slide, "Итоги и соответствие критериям")
+    _title_bar(slide, "Итоги проекта")
     _table(
         slide,
         Inches(0.5),
         Inches(1.5),
         Inches(7.9),
         Inches(5.0),
-        ["Критерий (баллы)", "Реализация"],
+        ["Компонент", "Что сделано"],
         [
-            ["Git и структура (3)", "структура как в задании, осмысленные коммиты"],
-            ["Данные и валидация (7)", "EDA-ноутбук, FE, 104 проверки Great Expectations"],
-            ["Модель (8)", "Pipeline + RandomizedSearchCV, ROC-AUC/PR-AUC/KS/F1, ROC-кривая"],
-            ["MLflow (8)", "6 экспериментов, артефакты, model registry"],
-            ["DVC (5)", "3 стадии, версионирование данных и модели, dvc repro"],
-            ["Тесты и CI (7)", "100 тестов, black/flake8, 4 джоба GH Actions"],
-            ["Docker и FastAPI (7)", "образ, /predict, smoke-тест, живой сервис"],
-            ["Мониторинг (3)", "PSI/KS-скрипт, алерты, отчёты"],
-            ["Демонстрация (2)", "эта презентация + MLflow UI"],
+            ["Данные", "аудит качества, 104 проверки Great Expectations, EDA-ноутбук"],
+            ["Признаки", "23 производных признака, единый код для обучения и сервиса"],
+            ["Модель", "Pipeline + RandomizedSearchCV, ROC-AUC 0.781, PR-AUC 0.557, KS 0.431"],
+            ["Эксперименты", "6 прогонов в MLflow с артефактами и model registry"],
+            ["Воспроизводимость", "DVC-пайплайн из трёх стадий, params.yaml, dvc repro"],
+            ["Качество кода", "100 тестов, black + flake8, CI в GitHub Actions"],
+            ["Развёртывание", "Docker-образ, FastAPI /predict, smoke-тесты"],
+            ["Мониторинг", "PSI/KS-дрифт, алерты, отчёты"],
+            ["Документация", "README, презентация, сравнительный отчёт по экспериментам"],
         ],
         col_widths=[2.5, 5.4],
         font_size=11,
