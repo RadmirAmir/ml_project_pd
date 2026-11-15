@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-11-15T13:44:51+00:00",
+  "reference_size": 1000,
+  "current_size": 1000,
+  "score_psi": 0.029434,
+  "score_verdict": "stable",
+  "score_ks": 0.038,
+  "score_ks_pvalue": 0.46596,
+  "feature_psi": {
+    "LIMIT_BAL": 0.009008,
+    "AGE": 0.021614,
+    "PAY_0": 0.004469,
+    "BILL_AMT1": 0.008766,
+    "PAY_AMT1": 0.029005,
+    "CREDIT_UTILIZATION": 0.016212,
+    "DELINQ_COUNT": 0.001357
+  },
+  "threshold": 0.29,
+  "reference_mean_pd": 0.216706,
+  "current_mean_pd": 0.21876,
+  "current_default_rate": 0.219,
+  "performance": {
+    "roc_auc": 0.767485778097393,
+    "default_rate": 0.219,
+    "flagged_rate": 0.225
+  },
+  "alerts": []
+}
