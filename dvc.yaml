@@ -1,0 +1,56 @@
+stages:
+  prepare:
+    desc: "Clean the raw UCI data, engineer features and split train/test"
+    cmd: python -m src.data.make_dataset --input ${data.raw_path} --output-dir ${data.processed_dir} --test-size ${data.test_size} --random-state ${data.random_state}
+    deps:
+      - src/data/make_dataset.py
+      - src/features/build_features.py
+      - src/config.py
+      - ${data.raw_path}
+    params:
+      - data.test_size
+      - data.random_state
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+      - data/processed/feature_metadata.json
+
+  validate:
+    desc: "Run the Great Expectations suite against the raw dataset"
+    cmd: python -m src.data.validation --input ${data.raw_path} --output data/expectations/validation_result.json
+    deps:
+      - src/data/validation.py
+      - src/features/build_features.py
+      - ${data.raw_path}
+    outs:
+      - data/expectations/validation_result.json
+
+  train:
+    desc: "Fit the sklearn pipeline, run the hyper-parameter search and log to MLflow"
+    cmd: python -m src.models.train --params params.yaml
+    deps:
+      - src/models/train.py
+      - src/models/pipeline.py
+      - src/models/evaluate.py
+      - src/models/predict.py
+      - src/features/build_features.py
+      - data/processed/train.csv
+      - data/processed/test.csv
+    params:
+      - train.model
+      - train.search
+      - train.n_iter
+      - train.cv
+      - train.scoring
+      - data.random_state
+    outs:
+      - models/credit_default_model.joblib
+      - models/model_card.json
+    metrics:
+      - metrics/metrics.json:
+          cache: false
+    plots:
+      - reports/figures/roc_curve.png
+      - reports/figures/pr_curve.png
+      - reports/figures/confusion_matrix.png
+      - reports/figures/threshold_sweep.png
