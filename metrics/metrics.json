@@ -1,6 +1,6 @@
 {
   "model_name": "hist_gradient_boosting",
-  "trained_at": "2026-11-15T14:50:02+00:00",
+  "trained_at": "2026-11-15T14:58:15+00:00",
   "threshold": 0.29,
   "roc_auc": 0.7813010042942582,
   "pr_auc": 0.556964539813823,

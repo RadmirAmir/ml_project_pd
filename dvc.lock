@@ -100,15 +100,15 @@ stages:
     outs:
     - path: metrics/metrics.json
       hash: md5
-      md5: c4c8a5dfafd0f95200375d94f2583925
+      md5: 05b76900c8e1ee22f980c1582714d8ab
       size: 760
     - path: models/credit_default_model.joblib
       hash: md5
-      md5: 3db19ad42ff39381f269a242de1a74b2
+      md5: 63d24ca79d978e712fd1e470c3be9912
       size: 219099
     - path: models/model_card.json
       hash: md5
-      md5: e9aca89c154d02e4e83cf6ef5222b200
+      md5: 583a5cc728425eefee9c9a57c3b5df98
       size: 3271
     - path: reports/figures/confusion_matrix.png
       hash: md5
