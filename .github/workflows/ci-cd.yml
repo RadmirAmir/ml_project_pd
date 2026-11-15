@@ -1,0 +1,144 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # ------------------------------------------------------------------ #
+  # 1. Code quality: black + flake8
+  # ------------------------------------------------------------------ #
+  lint:
+    name: Lint (black + flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install linters
+        run: pip install black==26.10.1 flake8==7.5.0
+
+      - name: Black (formatting check)
+        run: black --check --diff src tests
+
+      - name: Flake8 (style check)
+        run: flake8 src tests
+
+  # ------------------------------------------------------------------ #
+  # 2. Unit tests
+  # ------------------------------------------------------------------ #
+  test:
+    name: Unit tests (pytest)
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run pytest
+        run: pytest -m "not slow" --cov=src --cov-report=xml --cov-report=term-missing -q
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.xml
+          if-no-files-found: ignore
+
+  # ------------------------------------------------------------------ #
+  # 3. Data validation with Great Expectations
+  # ------------------------------------------------------------------ #
+  data-validation:
+    name: Data validation (Great Expectations)
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements-train.txt
+
+      # A committed 1 200-row sample keeps CI independent from DVC storage.
+      # The full dataset is validated locally with `dvc repro validate`.
+      - name: Validate the sample delivery
+        run: python -m src.data.validation --input tests/fixtures/sample_credit.csv --output validation_result.json
+
+      - name: Export the expectation suite
+        run: python -m src.data.validation --export-suite
+
+      - name: Upload validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-validation
+          path: |
+            validation_result.json
+            data/expectations/credit_raw_data_suite.json
+
+  # ------------------------------------------------------------------ #
+  # 4. Docker build + container smoke test (CD)
+  # ------------------------------------------------------------------ #
+  docker:
+    name: Docker image + API smoke test
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Train a lightweight model for the image
+        run: |
+          pip install -r requirements-train.txt
+          python -m src.data.make_dataset \
+            --input tests/fixtures/sample_credit.csv \
+            --output-dir data/processed
+          python -m src.models.train \
+            --model logistic_regression --search none --no-mlflow --no-register
+
+      - name: Build the image
+        run: docker build -t credit-default-api:ci .
+
+      - name: Run the container
+        run: |
+          docker run -d --name api -p 8000:8000 credit-default-api:ci
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8000/health; then break; fi
+            sleep 2
+          done
+
+      - name: Smoke test /predict
+        run: |
+          curl --fail --silent -X POST http://127.0.0.1:8000/predict \
+            -H "Content-Type: application/json" \
+            -d '{"LIMIT_BAL":20000,"SEX":2,"EDUCATION":2,"MARRIAGE":1,"AGE":24,"PAY_0":2,"BILL_AMT1":3913,"PAY_AMT1":0}'
+
+      - name: Container logs
+        if: failure()
+        run: docker logs api || true
