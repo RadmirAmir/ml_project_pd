@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "credit-scoring-model"
+version = "1.0.0"
+description = "End-to-end MLOps pipeline for a credit card default (PD) model"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "ML Engineer, Credit Risk Department" }]
+keywords = ["credit-risk", "pd-model", "mlops", "mlflow", "dvc", "fastapi"]
+
+# Runtime dependencies live in requirements*.txt so that the Docker image can
+# install exactly the subset it needs (see Dockerfile ARG REQUIREMENTS).
+dependencies = []
+
+[tool.setuptools]
+packages = ["src", "src.data", "src.features", "src.models", "src.api", "src.monitoring"]
+
+[tool.black]
+line-length = 120
+target-version = ["py311"]
+extend-exclude = '''
+/(
+    \.venv
+  | \.dvc
+  | mlruns
+  | data
+  | notebooks/.*\.ipynb
+)/
+'''
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-ra -q --strict-markers"
+markers = [
+    "slow: marks tests that train a model (deselect with '-m \"not slow\"')",
+    "integration: marks tests that need the trained artifact or a running API",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:great_expectations.*",
+    "ignore::DeprecationWarning:pandera.*",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*", "src/api/app.py"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if __name__ == .__main__.", "raise NotImplementedError"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+known_first_party = ["src"]

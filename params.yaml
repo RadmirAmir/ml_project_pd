@@ -1,0 +1,26 @@
+data:
+  raw_path: data/raw/UCI_Credit_Card.csv
+  processed_dir: data/processed
+  test_size: 0.2
+  random_state: 42
+  target: default.payment.next.month
+
+train:
+  # Histogram-based gradient boosting is the production candidate: it is fast
+  # enough to retrain on every DVC run and it handles the mixed feature types
+  # produced by the preprocessing pipeline.
+  model: hist_gradient_boosting
+  search: randomized
+  n_iter: 25
+  cv: 5
+  scoring: roc_auc
+  # Parallel fits; the low-level thread pools are pinned to 1 in src/config.py.
+  n_jobs: 4
+
+mlflow:
+  experiment_name: credit_default_pd_model
+  registered_model_name: CreditDefaultModel
+
+monitoring:
+  psi_moderate: 0.1
+  psi_significant: 0.25

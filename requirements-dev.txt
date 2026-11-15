@@ -1,0 +1,9 @@
+# Development tooling: tests, linting, data/model versioning and API testing.
+-r requirements-train.txt
+
+black==26.10.1
+dvc==3.67.1
+flake8==7.5.0
+httpx==0.28.1
+pytest==9.2.0
+pytest-cov==7.0.0
